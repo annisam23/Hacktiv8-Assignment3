@@ -67,74 +67,6 @@ function closeModal() {
     }
 }
 
-function updateProduct(productId) {
-    fetch(`https://fakestoreapi.com/products/${productId}`)
-        .then((response) => response.json())
-        .then((product) => {
-            const modal = document.createElement("div");
-            modal.classList.add("modal");
-            modal.style.display = "flex";
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <h2 class="heading-detail">Edit Produk</h2>
-                    <form id="update-form">
-                        <input type="number" name="id" value="${product.id}">
-                        <label for="title">Name:</label>
-                        <input type="text" id="title" name="title" value="${product.title}"><br>
-                        <label for="price">Price:</label>
-                        <input type="number" id="price" name="price" value="${product.price}"><br>
-                        <label for="category">Category:</label>
-                        <input type="text" id="category" name="category" value="${product.category}"><br>
-                        <label for="description">Descricption:</label>
-                        <input type="text" id="description" name="description" value="${product.description}"><br>
-                        <label for="rating">Rating:</label>
-                        <input type="text" id="rating" name="rating" value="${product.rating.rate}"><br>
-                        <label for="image">Image:</label>
-                        <input type="text" id="image" name="image" value="${product.image}"><br>
-                        <button type="button" onclick="submitUpdateForm()">Save</button>
-                    </form>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        })
-        .catch((error) => {
-            console.error("Error fetching product data:", error);
-        });
-}
-
-function submitUpdateForm() {
-    const updateForm = document.getElementById("update-form");
-    const formData = new FormData(updateForm);
-    const productId = formData.get("id");
-
-    fetch(`https://fakestoreapi.com/products/${productId}`, {
-        method: "PUT",
-        body: JSON.stringify(Object.fromEntries(formData)),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    })
-    .then((response) => response.json())
-    .then(() => {
-        const successMessage = `Product with ID ${productId} was updated successfully`;
-        const alertDiv = document.createElement("div");
-        alertDiv.classList.add("update-alert");
-        alertDiv.textContent = successMessage;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 3000);
-
-        closeModal();
-    })
-    .catch((error) => {
-        console.error("Error updating product:", error);
-    });
-}
-
-
 function deleteProduct(productId) {
     const confirmationMessage = `Are you sure want to delete this product with ID ${productId}`;
     
@@ -242,13 +174,13 @@ function addProductToTable(product) {
         <td id="category">${product.category}</td>
         <td>
         <div class="text-center">
-            <a href="#" class="btn btn-success" onclick="viewProduct(${product.id})">
+            <a href="#" class="btn btn-success mb-2" onclick="viewProduct(${product.id})">
             <i class="fas fa-eye"></i>
             </a>
-            <a href="#" class="btn btn-warning" onclick="updateProduct(${product.id})">
+            <a href="#" class="btn btn-warning mb-2" onclick="updateProduct(${product.id})">
                 <i class="fas fa-edit"></i>
             </a>
-            <a href="#" class="btn btn-danger" onclick="deleteProduct(${product.id})">
+            <a href="#" class="btn btn-danger mb-2" onclick="deleteProduct(${product.id})">
                 <i class="fas fa-trash"></i>
             </a>
             </div>
@@ -257,3 +189,84 @@ function addProductToTable(product) {
     productTableBody.appendChild(row);
 }
 
+function updateProduct(productId) {
+    fetch(`https://fakestoreapi.com/products/${productId}`)
+        .then((response) => response.json())
+        .then((product) => {
+            const modal = document.createElement("div");
+            modal.classList.add("modal");
+            modal.style.display = "flex";
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2 class="heading-detail">Edit Produk</h2>
+                    <form id="update-form">
+                        <input type="hidden" name="id" value="${product.id}">
+                        <label for="title">Name:</label>
+                        <input type="text" id="title" name="title" value="${product.title}"><br>
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" name="price" value="${product.price}"><br>
+                        <label for="category">Category:</label>
+                        <input type="text" id="category" name="category" value="${product.category}"><br>
+                        <label for="description">Descricption:</label>
+                        <input type="text" id="description" name="description" value="${product.description}"><br>
+                        <label for="rating">Rating:</label>
+                        <input type="text" id="rating" name="rating" value="${product.rating.rate}"><br>
+                        <label for="image">Image:</label>
+                        <input type="text" id="image" name="image" value="${product.image}"><br>
+                        <button type="button" onclick="submitUpdateForm()">Save</button>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        })
+        .catch((error) => {
+            console.error("Error fetching product data:", error);
+        });
+}
+
+function submitUpdateForm() {
+    const updateForm = document.getElementById("update-form");
+    const formData = new FormData(updateForm);
+    const productId = formData.get("id");
+
+    fetch(`https://fakestoreapi.com/products/${productId}`, {
+        method: "PUT",
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then((response) => response.json())
+    .then((updatedProduct) => {
+        const successMessage = `Product with ID ${productId} was updated successfully`;
+        const alertDiv = document.createElement("div");
+        alertDiv.classList.add("update-alert");
+        alertDiv.textContent = successMessage;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+        
+        const idNya = document.getElementById("id");
+        const titleDiv = document.getElementById("title");
+        const priceDiv = document.getElementById("price");
+        const categoryDiv = document.getElementById("category");
+        const descDiv = document.getElementById("description");
+        const ratingDiv = document.getElementById("rating");
+        const imageDiv = document.getElementById("image");
+
+        idNya.innerText = updatedProduct.id;
+        titleDiv.innerText = updatedProduct.title;
+        priceDiv.innerText = updatedProduct.price;
+        categoryDiv.innerText = updatedProduct.category;
+        descDiv.innerText = updatedProduct.description;
+        ratingDiv.innerText = updatedProduct.rating;
+        imageDiv.innerText = updatedProduct.image;
+        
+    })
+    .catch((error) => {
+        console.error("Error updating product:", error);
+    });
+}

@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
             data.forEach((product) => {
                 const row = document.createElement("tr");
+                row.id = `product-${product.id}`;
+                //console.log(row.id);
                 row.innerHTML = `
                     <td id="id">${product.id}</td>
                     <td id="title">${product.title}</td>
@@ -43,7 +45,7 @@ function viewProduct(productId) {
             modal.innerHTML = `
                 <div class="modal-content">
                     <span class="close" onclick="closeModal()">&times;</span>
-                    <h2 class="heading-detail">Detail Produk</h2>
+                    <h2 class="heading-detail">Product Details</h2>
                     <p>ID: ${product.id}</p>
                     <p>Name: ${product.title}</p>
                     <p>Price: ${product.price}</p>
@@ -67,34 +69,6 @@ function closeModal() {
     }
 }
 
-function deleteProduct(productId) {
-    const confirmationMessage = `Are you sure want to delete this product with ID ${productId}`;
-    
-    if (confirm(confirmationMessage)) {
-        fetch(`https://fakestoreapi.com/products/${productId}`, {
-            method: "DELETE",
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                const successMessage = `Product with ID ${productId} was deleted successfully.`;
-                const alertDiv = document.createElement("div");
-                alertDiv.classList.add("confirmation-alert");
-                alertDiv.textContent = successMessage;
-                document.body.appendChild(alertDiv);
-
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 3000);
-            } else {
-                console.error(`Failed to delete product with ID ${productId}.`);
-            }
-        })
-        .catch((error) => {
-            console.error("Error deleting product:", error);
-        });
-    }
-}
-
 function addData() {
     const modal = document.createElement("div");
     modal.classList.add("modal");
@@ -102,14 +76,19 @@ function addData() {
     modal.innerHTML = `
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h2 class="heading-detail">Tambah Data Baru</h2>
+            <h2 class="heading-detail">Add New Data</h2>
             <form id="add-form">
                 <label for="title">Name:</label>
                 <input class="form-control" type="text" id="title" name="title" required><br>
                 <label for="price">Price:</label>
                 <input class="form-control" type="number" id="price" name="price" required><br>
                 <label for="category">Category:</label>
-                <input class="form-control" type="text" id="category" name="category" required><br>
+                <select class="form-control" id="category" name="category" required>
+                <option value="men's clothing">Men's Clothing</option>
+                <option value="women's clothing">Women's Clothing</option>
+                <option value="electronics">Electronics</option>
+                <option value="jewelry">Jewelry</option>
+                </select><br>
                 <label for="description">Descricption:</label>
                 <input class="form-control" type="text" id="description" name="description" required><br>
                 <label for="rating">Rating:</label>
@@ -167,22 +146,24 @@ function submitAddForm() {
 function addProductToTable(product) {
     const productTableBody = document.getElementById("product-table-body");
     const row = document.createElement("tr");
+    row.id = `product-${product.id}`;
+    //console.log(row.id);
     row.innerHTML = `
         <td id="id">${product.id}</td>
         <td id="title">${product.title}</td>
         <td id="price">${product.price}</td>
         <td id="category">${product.category}</td>
         <td>
-        <div class="text-center">
-            <a href="#" class="btn btn-success mb-2" onclick="viewProduct(${product.id})">
-            <i class="fas fa-eye"></i>
-            </a>
-            <a href="#" class="btn btn-warning mb-2" onclick="updateProduct(${product.id})">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a href="#" class="btn btn-danger mb-2" onclick="deleteProduct(${product.id})">
-                <i class="fas fa-trash"></i>
-            </a>
+            <div class="text-center">
+                <a href="#" class="btn btn-success mb-2" onclick="viewProduct(${product.id})">
+                <i class="fas fa-eye"></i>
+                </a>
+                <a href="#" class="btn btn-warning mb-2" onclick="updateProduct(${product.id})">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="#" class="btn btn-danger mb-2" onclick="deleteProduct(${product.id})">
+                    <i class="fas fa-trash"></i>
+                </a>
             </div>
         </td>
     `;
@@ -199,7 +180,7 @@ function updateProduct(productId) {
             modal.innerHTML = `
                 <div class="modal-content">
                     <span class="close" onclick="closeModal()">&times;</span>
-                    <h2 class="heading-detail">Edit Produk</h2>
+                    <h2 class="heading-detail">Edit Product</h2>
                     <form id="update-form">
                         <input type="hidden" name="id" value="${product.id}">
                         <label for="title">Name:</label>
@@ -207,7 +188,20 @@ function updateProduct(productId) {
                         <label for="price">Price:</label>
                         <input type="number" id="price" name="price" value="${product.price}"><br>
                         <label for="category">Category:</label>
-                        <input type="text" id="category" name="category" value="${product.category}"><br>
+                        <select id="category" name="category">
+                            <option value="men's clothing" ${
+                                product.category === "men's clothing" ? 'selected' : ''
+                            }>Men's Clothing</option>
+                            <option value="women's clothing" ${
+                                product.category === "women's clothing" ? 'selected' : ''
+                            }>Women's Clothing</option>
+                            <option value="electronics" ${
+                                product.category === "electronics" ? 'selected' : ''
+                            }>Electronics</option>
+                            <option value="jewelry" ${
+                                product.category === "jewelry" ? 'selected' : ''
+                            }>Jewelry</option>
+                        </select><br>
                         <label for="description">Descricption:</label>
                         <input type="text" id="description" name="description" value="${product.description}"><br>
                         <label for="rating">Rating:</label>
@@ -247,6 +241,7 @@ function submitUpdateForm() {
 
         setTimeout(() => {
             alertDiv.remove();
+            closeModal();
         }, 3000);
         
         const idNya = document.getElementById("id");
@@ -269,4 +264,37 @@ function submitUpdateForm() {
     .catch((error) => {
         console.error("Error updating product:", error);
     });
+}
+
+
+function deleteProduct(productId) {
+    const confirmationMessage = `Are you sure want to delete this product with ID ${productId}`;
+    if (confirm(confirmationMessage)) {
+        fetch(`https://fakestoreapi.com/products/${productId}`, {
+            method: "DELETE",
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                const successMessage = `Product with ID ${productId} was deleted successfully.`;
+                const alertDiv = document.createElement("div");
+                alertDiv.classList.add("confirmation-alert");
+                alertDiv.textContent = successMessage;
+                document.body.appendChild(alertDiv);
+
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+
+                const productRow = document.getElementById(`product-${productId}`);
+                if (productRow) {
+                    productRow.remove();
+                }
+            } else {
+                console.error(`Failed to delete product with ID ${productId}.`);
+            }
+        })
+        .catch((error) => {
+            console.error("Error deleting product:", error);
+        });
+    }
 }

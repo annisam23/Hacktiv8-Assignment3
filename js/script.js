@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const productTableBody = document.getElementById("product-table-body");
-
+    let counter = 1;
     fetch("https://fakestoreapi.com/products")
         .then((response) => response.json())
         .then((data) => {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.id = `product-${product.id}`;
                 //console.log(row.id);
                 row.innerHTML = `
-                    <td id="id">${product.id}</td>
+                    <td id="id">${counter++}</td>
                     <td id="title">${product.title}</td>
                     <td id="price">${product.price}</td>
                     <td id="category">${product.category}</td>
@@ -234,6 +234,7 @@ function submitUpdateForm() {
     .then((response) => response.json())
     .then((updatedProduct) => {
         const successMessage = `Product with ID ${productId} was updated successfully`;
+        //console.log(productId)
         const alertDiv = document.createElement("div");
         alertDiv.classList.add("update-alert");
         alertDiv.textContent = successMessage;
@@ -243,23 +244,13 @@ function submitUpdateForm() {
             alertDiv.remove();
             closeModal();
         }, 3000);
-        
-        const idNya = document.getElementById("id");
-        const titleDiv = document.getElementById("title");
-        const priceDiv = document.getElementById("price");
-        const categoryDiv = document.getElementById("category");
-        const descDiv = document.getElementById("description");
-        const ratingDiv = document.getElementById("rating");
-        const imageDiv = document.getElementById("image");
 
-        idNya.innerText = updatedProduct.id;
-        titleDiv.innerText = updatedProduct.title;
-        priceDiv.innerText = updatedProduct.price;
-        categoryDiv.innerText = updatedProduct.category;
-        descDiv.innerText = updatedProduct.description;
-        ratingDiv.innerText = updatedProduct.rating;
-        imageDiv.innerText = updatedProduct.image;
-        
+        document.getElementById("title").innerText = updatedProduct.title;
+        document.getElementById("price").innerText = updatedProduct.price;
+        document.getElementById("category").innerText = updatedProduct.category
+        document.getElementById("description").innerText = updatedProduct.description;
+        document.getElementById("rating").innerText = updatedProduct.rating;
+        document.getElementById("image").innerText = updatedProduct.image;
     })
     .catch((error) => {
         console.error("Error updating product:", error);

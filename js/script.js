@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function getAll() {
     const productTableBody = document.getElementById("product-table-body");
     let counter = 1;
     fetch("https://fakestoreapi.com/products")
@@ -13,6 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td id="title">${product.title}</td>
                     <td id="price">${product.price}</td>
                     <td id="category">${product.category}</td>
+                    <td id="rating">${product.rating.rate}</td>
+                    <td id="image">
+                    <img src="${product.image}" style="max-width: 100px; max-height: 100px; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);">
+                    </td>
+                    </td>
                     <td class="">
                         <div class="text-center">
                         <a href="#" class="btn btn-success mb-2" onclick="viewProduct(${product.id})">
@@ -294,6 +299,7 @@ function submitUpdateForm() {
         setTimeout(() => {
             alertDiv.remove();
             closeModal();
+            getAll();
         }, 3000);
 
         document.getElementById("title").innerText = updatedData.title;

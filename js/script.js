@@ -170,94 +170,6 @@ function addProductToTable(product) {
     productTableBody.appendChild(row);
 }
 
-function updateProduct(productId) {
-    fetch(`https://fakestoreapi.com/products/${productId}`)
-        .then((response) => response.json())
-        .then((product) => {
-            const modal = document.createElement("div");
-            modal.classList.add("modal");
-            modal.style.display = "flex";
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
-                    <h2 class="heading-detail">Edit Product</h2>
-                    <form id="update-form">
-                        <input type="hidden" name="id" value="${product.id}">
-                        <label for="title">Name:</label>
-                        <input type="text" id="title" name="title" value="${product.title}"><br>
-                        <label for="price">Price:</label>
-                        <input type="number" id="price" name="price" value="${product.price}"><br>
-                        <label for="category">Category:</label>
-                        <select id="category" name="category">
-                            <option value="men's clothing" ${
-                                product.category === "men's clothing" ? 'selected' : ''
-                            }>Men's Clothing</option>
-                            <option value="women's clothing" ${
-                                product.category === "women's clothing" ? 'selected' : ''
-                            }>Women's Clothing</option>
-                            <option value="electronics" ${
-                                product.category === "electronics" ? 'selected' : ''
-                            }>Electronics</option>
-                            <option value="jewelry" ${
-                                product.category === "jewelry" ? 'selected' : ''
-                            }>Jewelry</option>
-                        </select><br>
-                        <label for="description">Descricption:</label>
-                        <input type="text" id="description" name="description" value="${product.description}"><br>
-                        <label for="rating">Rating:</label>
-                        <input type="text" id="rating" name="rating" value="${product.rating.rate}"><br>
-                        <label for="image">Image:</label>
-                        <input type="text" id="image" name="image" value="${product.image}"><br>
-                        <button type="button" onclick="submitUpdateForm()">Save</button>
-                    </form>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        })
-        .catch((error) => {
-            console.error("Error fetching product data:", error);
-        });
-}
-
-function submitUpdateForm() {
-    const updateForm = document.getElementById("update-form");
-    const formData = new FormData(updateForm);
-    const productId = formData.get("id");
-
-    fetch(`https://fakestoreapi.com/products/${productId}`, {
-        method: "PUT",
-        body: JSON.stringify(Object.fromEntries(formData)),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    })
-    .then((response) => response.json())
-    .then((updatedProduct) => {
-        const successMessage = `Product with ID ${productId} was updated successfully`;
-        //console.log(productId)
-        const alertDiv = document.createElement("div");
-        alertDiv.classList.add("update-alert");
-        alertDiv.textContent = successMessage;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.remove();
-            closeModal();
-        }, 3000);
-
-        document.getElementById("title").innerText = updatedProduct.title;
-        document.getElementById("price").innerText = updatedProduct.price;
-        document.getElementById("category").innerText = updatedProduct.category
-        document.getElementById("description").innerText = updatedProduct.description;
-        document.getElementById("rating").innerText = updatedProduct.rating;
-        document.getElementById("image").innerText = updatedProduct.image;
-    })
-    .catch((error) => {
-        console.error("Error updating product:", error);
-    });
-}
-
-
 function deleteProduct(productId) {
     const confirmationMessage = `Are you sure want to delete this product with ID ${productId}`;
     if (confirm(confirmationMessage)) {
@@ -288,4 +200,110 @@ function deleteProduct(productId) {
             console.error("Error deleting product:", error);
         });
     }
+}
+
+function updateProduct(productId) {
+    return fetch(`https://fakestoreapi.com/products/${productId}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((product) => {
+            //console.log("Product data retrieved successfully:", product);
+            //return product;
+                const modal = document.createElement("div");
+                modal.classList.add("modal");
+                modal.style.display = "flex";
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h2 class="heading-detail">Edit Product</h2>
+                        <form id="update-form">
+                            <input type="hidden" name="id" value="${product.id}">
+                            <label for="title">Name:</label>
+                            <input type="text" id="title" name="title" value="${product.title}"><br>
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" name="price" value="${product.price}"><br>
+                            <label for="category">Category:</label>
+                            <select id="category" name="category">
+                                <option value="men's clothing" ${
+                                    product.category === "men's clothing" ? 'selected' : ''
+                                }>Men's Clothing</option>
+                                <option value="women's clothing" ${
+                                    product.category === "women's clothing" ? 'selected' : ''
+                                }>Women's Clothing</option>
+                                <option value="electronics" ${
+                                    product.category === "electronics" ? 'selected' : ''
+                                }>Electronics</option>
+                                <option value="jewelry" ${
+                                    product.category === "jewelry" ? 'selected' : ''
+                                }>Jewelry</option>
+                            </select><br>
+                            <label for="description">Descricption:</label>
+                            <input type="text" id="description" name="description" value="${product.description}"><br>
+                            <label for="rating">Rating:</label>
+                            <input type="text" id="rating" name="rating" value="${product.rating.rate}"><br>
+                            <label for="image">Image:</label>
+                            <input type="text" id="image" name="image" value="${product.image}"><br>
+                            <button type="button" onclick="submitUpdateForm()">Save</button>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            })
+        .catch((error) => {
+            console.error("Error fetching product data:", error);
+        });
+}
+
+function submitUpdateForm() {
+    const updateForm = document.getElementById("update-form");
+    const formData = new FormData(updateForm);
+    const productId = formData.get("id");
+
+    const updatedData = {
+        id:formData.get("id"),
+        title: formData.get("title"),
+        price: parseFloat(formData.get("price")),
+        category: formData.get("category"),
+        description: formData.get("description"),
+        rating: {
+            rate: parseFloat(formData.get("rating"))
+        },
+        image: formData.get("image")
+    };
+
+    console.log(updatedData)
+    fetch(`https://fakestoreapi.com/products/${productId}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedData),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then((response) => response.json())
+    .then((updatedData) => {
+        const successMessage = `Product with ID ${productId} was updated successfully`;
+        const alertDiv = document.createElement("div");
+        alertDiv.classList.add("update-alert");
+        alertDiv.textContent = successMessage;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.remove();
+            closeModal();
+        }, 3000);
+
+        document.getElementById("title").innerText = updatedData.title;
+        document.getElementById("price").innerText = updatedData.price;
+        document.getElementById("category").innerText = updatedData.category
+        document.getElementById("description").innerText = updatedData.description;
+        document.getElementById("rating").innerText = updatedData.rating;
+        document.getElementById("image").innerText = updatedData.image;
+    })
+    .catch((error) => {
+        console.error("Error updating product:", error);
+    });
 }

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td id="title">${product.title}</td>
                     <td id="price">${product.price}</td>
                     <td id="category">${product.category}</td>
-                    <td id="image">
+                    <td id="image" class="text-center">
                     <img src="${product.image}" style="max-width: 100px; max-height: 100px; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);">
                     </td>
                     </td>

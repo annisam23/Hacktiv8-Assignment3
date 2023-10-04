@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function getAll() {
+document.addEventListener("DOMContentLoaded", function() {
     const productTableBody = document.getElementById("product-table-body");
     let counter = 1;
     fetch("https://fakestoreapi.com/products")
@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function getAll() {
                     <td id="title">${product.title}</td>
                     <td id="price">${product.price}</td>
                     <td id="category">${product.category}</td>
-                    <td id="rating">${product.rating.rate}</td>
                     <td id="image">
                     <img src="${product.image}" style="max-width: 100px; max-height: 100px; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);">
                     </td>
@@ -157,7 +156,10 @@ function addProductToTable(product) {
         <td id="id">${product.id}</td>
         <td id="title">${product.title}</td>
         <td id="price">${product.price}</td>
-        <td id="category">${product.category}</td>
+        <td id="category">${product.category}</td> 
+        <td id="image">
+        <img src="${product.image}" style="max-width: 100px; max-height: 100px; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);">
+        </td>
         <td>
             <div class="text-center">
                 <a href="#" class="btn btn-success mb-2" onclick="viewProduct(${product.id})">
@@ -279,8 +281,7 @@ function submitUpdateForm() {
         },
         image: formData.get("image")
     };
-
-    console.log(updatedData)
+    //console.log(updatedData)
     fetch(`https://fakestoreapi.com/products/${productId}`, {
         method: "PUT",
         body: JSON.stringify(updatedData),
@@ -299,15 +300,17 @@ function submitUpdateForm() {
         setTimeout(() => {
             alertDiv.remove();
             closeModal();
-            getAll();
         }, 3000);
-
-        document.getElementById("title").innerText = updatedData.title;
-        document.getElementById("price").innerText = updatedData.price;
-        document.getElementById("category").innerText = updatedData.category
-        document.getElementById("description").innerText = updatedData.description;
-        document.getElementById("rating").innerText = updatedData.rating;
-        document.getElementById("image").innerText = updatedData.image;
+        const rowToUpdate = document.getElementById(`product-${productId}`);
+        //console.log(rowToUpdate);
+        if (rowToUpdate) {
+            rowToUpdate.querySelector("#title").innerHTML= updatedData.title;
+            rowToUpdate.querySelector("#price").innerHTML= updatedData.price;
+            rowToUpdate.querySelector("#category").innerHTML= updatedData.category;
+            rowToUpdate.querySelector("#description").innerHTML= updatedData.description;
+            rowToUpdate.querySelector("#rating").innerHTML= updatedData.rating;
+            rowToUpdate.querySelector("#image").innerHTML= updatedData.image;
+        }
     })
     .catch((error) => {
         console.error("Error updating product:", error);
